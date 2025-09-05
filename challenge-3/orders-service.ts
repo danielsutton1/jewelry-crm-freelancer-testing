@@ -1,41 +1,53 @@
-// CHALLENGE 3: Fixed OrdersService
-// This file should contain your fixed service code
+import { createSupabaseServerClient } from '../lib/supabase/server'
+import { Order } from './types'
 
-import { createClient } from '@supabase/supabase-js'
-
-// TODO: Fix the OrdersService here
-// You need to:
-// 1. Handle undefined data properly
-// 2. Add proper error handling
-// 3. Add data validation
-// 4. Add TypeScript types
-// 5. Add logging for debugging
 
 export class OrdersService {
-  private supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-
   async getOrders(): Promise<Order[]> {
-    // TODO: Fix this method
-    const { data, error } = await supabase
-      .from('orders')
-      .select('*')
-    
-    // This can be undefined, causing crashes
-    return data
+    try {
+      const supabase = await createSupabaseServerClient()
+
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+
+      if (error) {
+        console.error('[OrdersService:getOrders] Database error:', error.message)
+        throw new Error('Failed to fetch orders')
+      }
+
+      // Always return array, never undefined
+      return data ?? []
+    } catch (err) {
+      console.error('[OrdersService:getOrders] Unexpected error:', err)
+      throw err
+    }
   }
-  
+
   async getOrderById(id: string): Promise<Order | null> {
-    // TODO: Fix this method
-    const { data, error } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('id', id)
-      .single()
-    
-    // This can also be undefined
-    return data
+    try {
+      const supabase = await createSupabaseServerClient()
+
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (error) {
+        console.error('[OrdersService:getOrderById] Database error:', error.message)
+        if (error.code === 'PGRST116') {
+          // Record not found
+          return null
+        }
+        throw new Error('Failed to fetch order')
+      }
+
+      // Return null if no record found, never undefined
+      return data ?? null
+    } catch (err) {
+      console.error('[OrdersService:getOrderById] Unexpected error:', err)
+      throw err
+    }
   }
 }

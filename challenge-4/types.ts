@@ -27,3 +27,15 @@ export interface AuthenticationError {
   status: number
 }
 */
+
+export interface UserData {
+  id: string
+  user_id: string
+  [key: string]: any
+}
+
+export interface ApiResponse {
+  success: boolean
+  data?: UserData[] | null
+  error?: string
+}
