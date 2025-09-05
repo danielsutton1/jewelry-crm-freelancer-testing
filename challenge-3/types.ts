@@ -1,15 +1,7 @@
 // CHALLENGE 3: TypeScript types for OrdersService
-// This file should contain your TypeScript type definitions
+// This file contains the TypeScript type definitions for the OrdersService
 
-// TODO: Define the TypeScript types here
-// You should include:
-// 1. Order type
-// 2. Service response types
-// 3. Error types
-// 4. Method parameter types
-
-// Example structure (you need to complete this):
-/*
+// Order type matching the database schema
 export interface Order {
   id: string
   customer_id: string
@@ -19,13 +11,35 @@ export interface Order {
   updated_at: string
 }
 
+// Service response types for consistent API responses
 export interface ServiceResponse<T> {
+  success: true
   data: T
-  error?: string
 }
 
 export interface ServiceError {
-  message: string
+  success: false
+  error: string
   code?: string
 }
-*/
+
+// Union type for all possible service responses
+export type ServiceResult<T> = ServiceResponse<T> | ServiceError
+
+// Order status enum for type safety
+export enum OrderStatus {
+  PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled'
+}
+
+// Supabase query result types
+export interface SupabaseOrderResult {
+  id: string
+  customer_id: string
+  total_amount: number
+  status: string
+  created_at: string
+  updated_at: string
+}

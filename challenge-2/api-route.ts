@@ -31,7 +31,6 @@ export async function GET(): Promise<NextResponse<CommunicationsResponse | Commu
       .order('created_at', { ascending: false }) as { data: SupabaseCommunicationResult[] | null, error: any }
     
     if (error) {
-      console.error('Supabase query error:', error)
       throw new Error(`Database query failed: ${error.message}`)
     }
     
@@ -41,28 +40,32 @@ export async function GET(): Promise<NextResponse<CommunicationsResponse | Commu
     }
     
     // Transform the data to match our expected format
-    const transformedData: Communication[] = data.map(comm => ({
-      id: comm.id,
-      message: comm.message,
-      sender_id: comm.sender_id,
-      recipient_id: comm.recipient_id,
-      created_at: comm.created_at,
-      updated_at: comm.updated_at,
-      sender: comm.sender ? {
-        id: comm.sender_id!,
-        name: comm.sender.name,
-        email: '', // Not selected in query for privacy
-        created_at: '',
-        updated_at: ''
-      } : null,
-      recipient: comm.recipient ? {
-        id: comm.recipient_id!,
-        name: comm.recipient.name,
-        email: '', // Not selected in query for privacy
-        created_at: '',
-        updated_at: ''
-      } : null
-    }))
+    const transformedData: Communication[] = data.map(comm => {
+      const { id, message, sender_id, recipient_id, created_at, updated_at, sender, recipient } = comm
+      
+      return {
+        id,
+        message,
+        sender_id,
+        recipient_id,
+        created_at,
+        updated_at,
+        sender: sender ? {
+          id: sender_id!,
+          name: sender.name,
+          email: '', // Not selected in query for privacy
+          created_at: '',
+          updated_at: ''
+        } : null,
+        recipient: recipient ? {
+          id: recipient_id!,
+          name: recipient.name,
+          email: '', // Not selected in query for privacy
+          created_at: '',
+          updated_at: ''
+        } : null
+      }
+    })
     
     const response: CommunicationsResponse = {
       success: true,
@@ -72,24 +75,11 @@ export async function GET(): Promise<NextResponse<CommunicationsResponse | Commu
     return NextResponse.json(response, { status: 200 })
     
   } catch (error) {
-    console.error('Error fetching communications:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error'
     
     // Determine appropriate status code based on error type
-    let statusCode = 500
-    let errorMessage = 'Internal server error'
-    
-    if (error instanceof Error) {
-      errorMessage = error.message
-      
-      // Check for specific error types
-      if (error.message.includes('Database query failed')) {
-        statusCode = 500
-      } else if (error.message.includes('connection')) {
-        statusCode = 503 // Service unavailable
-      } else if (error.message.includes('permission') || error.message.includes('auth')) {
-        statusCode = 403 // Forbidden
-      }
-    }
+    const statusCode = errorMessage.includes('connection') ? 503 :
+                      errorMessage.includes('permission') || errorMessage.includes('auth') ? 403 : 500
     
     const errorResponse: CommunicationsError = {
       success: false,

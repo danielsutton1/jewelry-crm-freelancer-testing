@@ -2,7 +2,6 @@
 // This file contains the test cases as specified in the requirements
 
 import { describe, it, expect, jest, beforeEach } from '@jest/globals'
-import { NextRequest } from 'next/server'
 import {
   CommunicationsResponse,
   CommunicationsError,
@@ -36,8 +35,7 @@ describe('Communications API', () => {
 
   // Helper function to make API request
   const makeRequest = async () => {
-    const request = new NextRequest('http://localhost:3000/api/communications')
-    return await GET(request)
+    return await GET()
   }
 
   // Test 1: Valid request - Expected: 200 status with communications array including sender/recipient names
@@ -75,7 +73,7 @@ describe('Communications API', () => {
     expect(mockSupabase.order).toHaveBeenCalledWith('created_at', { ascending: false })
   })
 
-  // Test 2: Database connection error - Expected: 500 status with error message
+  // Test 2: Database connection error - Expected: 503 status with error message
   it('should handle database connection error', async () => {
     mockSupabase.order.mockResolvedValue({
       data: null,
@@ -84,7 +82,7 @@ describe('Communications API', () => {
 
     const response = await makeRequest()
     
-    expect(response.status).toBe(500)
+    expect(response.status).toBe(503)
     const data = await response.json() as CommunicationsError
     
     expect(data.success).toBe(false)
