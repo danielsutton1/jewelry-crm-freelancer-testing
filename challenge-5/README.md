@@ -122,9 +122,9 @@ const totals = await service.calculateOrderTotals(orders)
 ---
 
 ## 🎯 **SUBMISSION CHECKLIST**
-- [ ] Data transformation fixed
-- [ ] Error handling implemented
-- [ ] TypeScript types defined
-- [ ] Test cases written and passing
-- [ ] Explanation document completed
-- [ ] All files submitted in challenge-5 folder
+- [x] Data transformation fixed
+- [x] Error handling implemented
+- [x] TypeScript types defined
+- [x] Test cases written and passing
+- [x] Explanation document completed
+- [x] All files submitted in challenge-5 folder
