@@ -27,7 +27,6 @@ import { describe, it, expect, jest, beforeEach } from '@jest/globals'
 import { OrdersService } from './orders-service'
 import { 
   Order, 
-  ServiceResult, 
   OrderStatus,
   SupabaseOrderResult
 } from './types'
@@ -51,25 +50,21 @@ describe('OrdersService', () => {
     ordersService = new OrdersService()
   })
 
+  // Helper function to create mock order
+  const createMockOrder = (id: string, customerId: string, totalAmount: number, status: string): SupabaseOrderResult => ({
+    id,
+    customer_id: customerId,
+    total_amount: totalAmount,
+    status,
+    created_at: '2024-01-01T10:00:00Z',
+    updated_at: '2024-01-01T10:00:00Z'
+  })
+
   // Test 1: Valid data scenario - Expected: Array of orders, never undefined
   it('should return array of orders, never undefined', async () => {
     const mockOrders: SupabaseOrderResult[] = [
-      {
-        id: '550e8400-e29b-41d4-a716-446655440001',
-        customer_id: '550e8400-e29b-41d4-a716-446655440001',
-        total_amount: 150.00,
-        status: 'pending',
-        created_at: '2024-01-01T10:00:00Z',
-        updated_at: '2024-01-01T10:00:00Z'
-      },
-      {
-        id: '550e8400-e29b-41d4-a716-446655440002',
-        customer_id: '550e8400-e29b-41d4-a716-446655440002',
-        total_amount: 275.50,
-        status: 'completed',
-        created_at: '2024-01-01T11:00:00Z',
-        updated_at: '2024-01-01T11:00:00Z'
-      }
+      createMockOrder('550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440001', 150.00, 'pending'),
+      createMockOrder('550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440002', 275.50, 'completed')
     ]
 
     // Mock the final method in the chain to return the data
@@ -156,14 +151,7 @@ describe('OrdersService', () => {
   // Test 7: Data validation - invalid order data
   it('should filter out invalid order data', async () => {
     const mockOrders: SupabaseOrderResult[] = [
-      {
-        id: '550e8400-e29b-41d4-a716-446655440001',
-        customer_id: '550e8400-e29b-41d4-a716-446655440001',
-        total_amount: 150.00,
-        status: 'pending',
-        created_at: '2024-01-01T10:00:00Z',
-        updated_at: '2024-01-01T10:00:00Z'
-      },
+      createMockOrder('550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440001', 150.00, 'pending'),
       {
         id: '', // Invalid - empty ID
         customer_id: '550e8400-e29b-41d4-a716-446655440002',
@@ -189,14 +177,7 @@ describe('OrdersService', () => {
   // Test 8: Service response wrapper methods
   it('should return proper service response for getOrdersWithResponse', async () => {
     const mockOrders: SupabaseOrderResult[] = [
-      {
-        id: '550e8400-e29b-41d4-a716-446655440001',
-        customer_id: '550e8400-e29b-41d4-a716-446655440001',
-        total_amount: 150.00,
-        status: 'pending',
-        created_at: '2024-01-01T10:00:00Z',
-        updated_at: '2024-01-01T10:00:00Z'
-      }
+      createMockOrder('550e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440001', 150.00, 'pending')
     ]
 
     mockSupabase.order.mockResolvedValue({

@@ -11,20 +11,10 @@ export interface Order {
   updated_at: string
 }
 
-// Service response types for consistent API responses
-export interface ServiceResponse<T> {
-  success: true
-  data: T
-}
-
-export interface ServiceError {
-  success: false
-  error: string
-  code?: string
-}
-
 // Union type for all possible service responses
-export type ServiceResult<T> = ServiceResponse<T> | ServiceError
+export type ServiceResult<T> = 
+  | { success: true; data: T }
+  | { success: false; error: string; code?: string }
 
 // Order status enum for type safety
 export enum OrderStatus {

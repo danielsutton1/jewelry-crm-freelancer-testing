@@ -42,19 +42,29 @@ describe('Communications API', () => {
     return await GET()
   }
 
+  // Helper function to create mock communication
+  const createMockCommunication = (id: string, message: string, senderId: string, recipientId: string, senderName: string, recipientName: string): SupabaseCommunicationResult => ({
+    id,
+    message,
+    sender_id: senderId,
+    recipient_id: recipientId,
+    created_at: '2024-01-01T10:00:00Z',
+    updated_at: '2024-01-01T10:00:00Z',
+    sender: { name: senderName },
+    recipient: { name: recipientName }
+  })
+
   // Test 1: Valid request - Expected: 200 status with communications array including sender/recipient names
   it('should return communications with user names', async () => {
     const mockData: SupabaseCommunicationResult[] = [
-      {
-        id: '550e8400-e29b-41d4-a716-446655440001',
-        message: 'Hello, how are you?',
-        sender_id: '550e8400-e29b-41d4-a716-446655440001',
-        recipient_id: '550e8400-e29b-41d4-a716-446655440002',
-        created_at: '2024-01-01T10:00:00Z',
-        updated_at: '2024-01-01T10:00:00Z',
-        sender: { name: 'Admin User' },
-        recipient: { name: 'Manager User' }
-      }
+      createMockCommunication(
+        '550e8400-e29b-41d4-a716-446655440001',
+        'Hello, how are you?',
+        '550e8400-e29b-41d4-a716-446655440001',
+        '550e8400-e29b-41d4-a716-446655440002',
+        'Admin User',
+        'Manager User'
+      )
     ]
 
     mockSupabase.order.mockResolvedValue({

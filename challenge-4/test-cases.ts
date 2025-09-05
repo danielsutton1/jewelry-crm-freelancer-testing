@@ -63,19 +63,22 @@ describe('Protected Route', () => {
     })
   }
 
+  // Helper function to create mock user
+  const createMockUser = (): User => ({
+    id: '550e8400-e29b-41d4-a716-446655440001',
+    email: 'admin@example.com',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z',
+    aud: 'authenticated',
+    role: 'authenticated',
+    app_metadata: {},
+    user_metadata: {},
+    identities: []
+  })
+
   // Test 1: Authenticated user scenario - Expected: 200 status with user data
   it('should return 200 for authenticated user', async () => {
-    const mockUser: User = {
-      id: '550e8400-e29b-41d4-a716-446655440001',
-      email: 'admin@example.com',
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z',
-      aud: 'authenticated',
-      role: 'authenticated',
-      app_metadata: {},
-      user_metadata: {},
-      identities: []
-    }
+    const mockUser = createMockUser()
 
     const mockUserData: UserData[] = [
       {
@@ -150,17 +153,7 @@ describe('Protected Route', () => {
 
   // Test 4: Database error scenario - Expected: 500 status with error message
   it('should return 500 for database errors', async () => {
-    const mockUser: User = {
-      id: '550e8400-e29b-41d4-a716-446655440001',
-      email: 'admin@example.com',
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z',
-      aud: 'authenticated',
-      role: 'authenticated',
-      app_metadata: {},
-      user_metadata: {},
-      identities: []
-    }
+    const mockUser = createMockUser()
 
     // Mock authenticated user
     mockSupabase.auth.getUser.mockResolvedValue({
@@ -187,17 +180,7 @@ describe('Protected Route', () => {
 
   // Test 5: Edge case - Empty user data
   it('should return 200 with empty array when no user data exists', async () => {
-    const mockUser: User = {
-      id: '550e8400-e29b-41d4-a716-446655440001',
-      email: 'admin@example.com',
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z',
-      aud: 'authenticated',
-      role: 'authenticated',
-      app_metadata: {},
-      user_metadata: {},
-      identities: []
-    }
+    const mockUser = createMockUser()
 
     // Mock authenticated user
     mockSupabase.auth.getUser.mockResolvedValue({
@@ -223,17 +206,7 @@ describe('Protected Route', () => {
 
   // Test 6: TypeScript types validation
   it('should have correct TypeScript types', () => {
-    const user: User = {
-      id: '550e8400-e29b-41d4-a716-446655440001',
-      email: 'admin@example.com',
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z',
-      aud: 'authenticated',
-      role: 'authenticated',
-      app_metadata: {},
-      user_metadata: {},
-      identities: []
-    }
+    const user = createMockUser()
     
     expect(user.id).toBe('550e8400-e29b-41d4-a716-446655440001')
     expect(user.email).toBe('admin@example.com')
