@@ -1,38 +1,92 @@
 // CHALLENGE 2: Fixed API route for communications
-// This file should contain your fixed API route code
+// This file contains the fixed API route code with proper relationships and error handling
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { 
+  CommunicationsResponse, 
+  CommunicationsError, 
+  SupabaseCommunicationResult,
+  Communication
+} from './types'
 
-// TODO: Fix the API route here
-// You need to:
-// 1. Fix the query to work with the new relationships
-// 2. Add proper error handling
-// 3. Add proper TypeScript types
-// 4. Add data validation
-
-export async function GET(request: NextRequest) {
+export async function GET(): Promise<NextResponse<CommunicationsResponse | CommunicationsError>> {
   try {
     const supabase = await createSupabaseServerClient()
     
-    // TODO: Fix this query
+    // Fixed query with proper foreign key relationships
+    // Now that we have foreign keys, Supabase can properly join the tables
     const { data, error } = await supabase
       .from('communications')
       .select(`
-        *,
-        sender:users(name),
-        recipient:users(name)
+        id,
+        message,
+        sender_id,
+        recipient_id,
+        created_at,
+        updated_at,
+        sender:sender_id(name),
+        recipient:recipient_id(name)
       `)
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: false }) as { data: SupabaseCommunicationResult[] | null, error: Error | null }
     
-    if (error) throw error
+    if (error) {
+      throw new Error(`Database query failed: ${error.message}`)
+    }
     
-    return NextResponse.json({ success: true, data })
+    // Handle null data case
+    if (!data) {
+      throw new Error('No data returned from database')
+    }
+    
+    // Transform the data to match our expected format
+    const transformedData: Communication[] = data.map(comm => {
+      const { id, message, sender_id, recipient_id, created_at, updated_at, sender, recipient } = comm
+      
+      return {
+        id,
+        message,
+        sender_id,
+        recipient_id,
+        created_at,
+        updated_at,
+        sender: sender ? {
+          id: sender_id!,
+          name: sender.name,
+          email: '', // Not selected in query for privacy
+          created_at: '',
+          updated_at: ''
+        } : null,
+        recipient: recipient ? {
+          id: recipient_id!,
+          name: recipient.name,
+          email: '', // Not selected in query for privacy
+          created_at: '',
+          updated_at: ''
+        } : null
+      }
+    })
+    
+    const response: CommunicationsResponse = {
+      success: true,
+      data: transformedData
+    }
+    
+    return NextResponse.json(response, { status: 200 })
+    
   } catch (error) {
-    console.error('Error fetching communications:', error)
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    )
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error'
+    
+    // Determine appropriate status code based on error type
+    const statusCode = errorMessage.includes('connection') ? 503 :
+                      errorMessage.includes('permission') || errorMessage.includes('auth') ? 403 : 500
+    
+    const errorResponse: CommunicationsError = {
+      success: false,
+      error: errorMessage,
+      status: statusCode
+    }
+    
+    return NextResponse.json(errorResponse, { status: statusCode })
   }
 }

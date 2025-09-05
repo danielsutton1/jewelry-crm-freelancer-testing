@@ -1,15 +1,7 @@
 // CHALLENGE 2: TypeScript types for communications API
-// This file should contain your TypeScript type definitions
+// This file contains the TypeScript type definitions for the communications API
 
-// TODO: Define the TypeScript types here
-// You should include:
-// 1. Communication type with user relationships
-// 2. API response types
-// 3. Error response types
-// 4. User type for the relationships
-
-// Example structure (you need to complete this):
-/*
+// Base User type from the database
 export interface User {
   id: string
   name: string
@@ -18,23 +10,43 @@ export interface User {
   updated_at: string
 }
 
+// Communication type with optional user relationships
 export interface Communication {
   id: string
   message: string
-  sender_id: string
-  recipient_id: string
+  sender_id: string | null
+  recipient_id: string | null
   created_at: string
   updated_at: string
-  sender?: User
-  recipient?: User
+  // Populated user objects when joined
+  sender?: User | null
+  recipient?: User | null
 }
 
+// API response types
 export interface CommunicationsResponse {
-  success: boolean
+  success: true
   data: Communication[]
 }
 
 export interface CommunicationsError {
+  success: false
   error: string
+  status?: number
 }
-*/
+
+// Type for Supabase query result - matches the actual Supabase response format
+export interface SupabaseCommunicationResult {
+  id: string
+  message: string
+  sender_id: string | null
+  recipient_id: string | null
+  created_at: string
+  updated_at: string
+  sender: {
+    name: string
+  } | null
+  recipient: {
+    name: string
+  } | null
+}

@@ -127,9 +127,9 @@ const order = await ordersService.getOrderById('invalid-id')
 ---
 
 ## 🎯 **SUBMISSION CHECKLIST**
-- [ ] Service fixed to handle undefined data
-- [ ] Error handling implemented
-- [ ] TypeScript types defined
-- [ ] Test cases written and passing
-- [ ] Explanation document completed
-- [ ] All files submitted in challenge-3 folder
+- [x] Service fixed to handle undefined data
+- [x] Error handling implemented
+- [x] TypeScript types defined
+- [x] Test cases written and passing
+- [x] Explanation document completed
+- [x] All files submitted in challenge-3 folder
