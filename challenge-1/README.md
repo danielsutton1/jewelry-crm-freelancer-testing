@@ -93,9 +93,9 @@ SELECT update_customer_company(NULL, 'valid-customer-id');
 ---
 
 ## 🎯 **SUBMISSION CHECKLIST**
-- [ ] Function created and working
-- [ ] Error handling implemented
-- [ ] TypeScript types defined
-- [ ] Test cases written and passing
-- [ ] Explanation document completed
-- [ ] All files submitted in challenge-1 folder
+- [x] Function created and working
+- [x] Error handling implemented
+- [x] TypeScript types defined
+- [x] Test cases written and passing
+- [x] Explanation document completed
+- [x] All files submitted in challenge-1 folder
