@@ -9,7 +9,7 @@ module.exports = {
   transform: {
     '^.+\\.ts$': ['ts-jest', { useESM: true }],
   },
-  testMatch: ['**/tests/**/*.test.ts'],
+  testMatch: ['**/challenge-*/**/*.test.ts', '**/challenge-*/**/test-cases.ts'],
   collectCoverageFrom: [
     'challenge-*/**/*.ts',
     '!challenge-*/**/*.d.ts',
