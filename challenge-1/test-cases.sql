@@ -23,3 +23,15 @@ SELECT update_customer_company('', 'valid-customer-id');
 -- Test 4: NULL company name
 SELECT update_customer_company(NULL, 'valid-customer-id');
 */
+
+-- Test 1: Valid update
+SELECT update_customer_company('New Company Name', '550e8400-e29b-41d4-a716-446655440002');
+
+-- Test 2: Invalid customer ID
+SELECT update_customer_company('New Company Name', '550e8400-e29b-41d4-a716-446655440009');
+
+-- Test 3: Empty company name
+SELECT update_customer_company('', '550e8400-e29b-41d4-a716-446655440002');
+
+-- Test 4: NULL company name
+SELECT update_customer_company(NULL, '550e8400-e29b-41d4-a716-446655440003');

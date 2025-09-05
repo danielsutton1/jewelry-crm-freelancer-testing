@@ -56,3 +56,36 @@ For questions about the challenges, please contact us through Upwork.
 5. **Submit your solutions**
 
 Good luck! 🍀
+
+## RUN COMMANDS
+
+## Run Challenge 1
+
+-- Test 1: Valid update
+SELECT update_customer_company('New Company Name', '550e8400-e29b-41d4-a716-446655440002');
+
+-- Test 2: Invalid customer ID
+SELECT update_customer_company('New Company Name', '550e8400-e29b-41d4-a716-446655440009');
+
+-- Test 3: Empty company name
+SELECT update_customer_company('', '550e8400-e29b-41d4-a716-446655440002');
+
+-- Test 4: NULL company name
+SELECT update_customer_company(NULL, '550e8400-e29b-41d4-a716-446655440003');
+
+## Run Challenge 2
+
+npx jest
+
+## Run Challenge 3
+
+npx jest challenge-3/test-cases.test.ts
+
+## Run Challenge 4
+
+npx jest challenge-4/test-cases.test.ts
+
+
+## Run Challenge 5
+
+npx jest challenge-5/test-cases.test.ts

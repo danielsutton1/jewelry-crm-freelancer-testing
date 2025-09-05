@@ -29,3 +29,13 @@ export interface ServiceError {
   code?: string
 }
 */
+
+
+export interface Order {
+  id: string
+  customer_id: string
+  total_amount: number
+  status: string
+  created_at: string
+  updated_at: string
+}

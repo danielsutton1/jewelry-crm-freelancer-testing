@@ -38,3 +38,20 @@ export interface CommunicationsError {
   error: string
 }
 */
+
+
+export interface UserSummary {
+  id: string
+  name: string
+  email: string
+}
+
+export interface Communication {
+  id: string
+  message: string
+  created_at: string
+  sender: UserSummary | null
+  recipient: UserSummary | null
+}
+
+export type CommunicationResponse = Communication[]
