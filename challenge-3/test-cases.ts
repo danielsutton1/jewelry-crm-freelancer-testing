@@ -8,7 +8,13 @@ const mockSupabase = {
   eq: jest.fn().mockReturnThis(),
   single: jest.fn().mockReturnThis(),
   order: jest.fn().mockReturnThis()
-} as any
+} as {
+  from: jest.MockedFunction<any>
+  select: jest.MockedFunction<any>
+  eq: jest.MockedFunction<any>
+  single: jest.MockedFunction<any>
+  order: jest.MockedFunction<any>
+}
 
 // Mock the createClient function
 const mockCreateClient = jest.fn().mockReturnValue(mockSupabase)
@@ -143,7 +149,7 @@ describe('OrdersService', () => {
     const order = await ordersService.getOrderById('')
     expect(order).toBeNull()
 
-    const order2 = await ordersService.getOrderById(null as any)
+    const order2 = await ordersService.getOrderById(null as unknown as string)
     expect(order2).toBeNull()
   })
 

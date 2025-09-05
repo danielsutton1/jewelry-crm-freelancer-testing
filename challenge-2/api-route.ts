@@ -28,7 +28,7 @@ export async function GET(): Promise<NextResponse<CommunicationsResponse | Commu
         sender:sender_id(name),
         recipient:recipient_id(name)
       `)
-      .order('created_at', { ascending: false }) as { data: SupabaseCommunicationResult[] | null, error: any }
+      .order('created_at', { ascending: false }) as { data: SupabaseCommunicationResult[] | null, error: Error | null }
     
     if (error) {
       throw new Error(`Database query failed: ${error.message}`)

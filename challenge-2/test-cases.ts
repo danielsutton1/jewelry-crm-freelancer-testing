@@ -15,7 +15,11 @@ const mockSupabase = {
   from: jest.fn().mockReturnThis(),
   select: jest.fn().mockReturnThis(),
   order: jest.fn().mockReturnThis()
-} as any
+} as {
+  from: jest.MockedFunction<any>
+  select: jest.MockedFunction<any>
+  order: jest.MockedFunction<any>
+}
 
 // Import the GET function before mocking
 import { GET } from './api-route'
