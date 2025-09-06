@@ -1,22 +1,9 @@
-// CHALLENGE 5: TypeScript types for OrderAnalyticsService
-// This file should contain your TypeScript type definitions
-
-// TODO: Define the TypeScript types here
-// You should include:
-// 1. Order type
-// 2. OrderItem type
-// 3. OrderTotals type
-// 4. OrderStatistics type
-// 5. Service response types
-// 6. Error types
-
-// Example structure (you need to complete this):
-/*
 export interface OrderItem {
   id: string
   product_id: string
   quantity: number
   price: number
+  created_at?: string
 }
 
 export interface Order {
@@ -33,10 +20,35 @@ export interface OrderTotals {
   totalRevenue: number
   averageOrderValue: number
   totalItems: number
+  orderCount: number
 }
 
 export interface OrderStatistics {
   totalOrders: number
   statusCounts: Record<string, number>
+  averageItemsPerOrder: number
 }
-*/
+
+export class AnalyticsError extends Error {
+  public code: string
+
+  constructor(message: string, code: string) {
+    super(message)
+    this.name = 'AnalyticsError'
+    this.code = code
+  }
+}
+
+export interface RevenueData {
+  period: string
+  revenue: number
+}
+
+export interface AnalyticsFilters {
+  startDate?: string
+  endDate?: string
+  status?: string
+  customerId?: string
+}
+
+export type PeriodType = 'day' | 'week' | 'month' | 'year'

@@ -1,40 +1,93 @@
-// CHALLENGE 4: Fixed protected API route
-// This file should contain your fixed API route code
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { ProtectedRouteResponse, ErrorResponse } from './types'
 
-// TODO: Fix the protected route here
-// You need to:
-// 1. Handle undefined user properly
-// 2. Add proper error handling
-// 3. Return appropriate HTTP status codes
-// 4. Add TypeScript types
-// 5. Add logging for debugging
-
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse<ProtectedRouteResponse | ErrorResponse>> {
   try {
     const supabase = await createSupabaseServerClient()
     
-    // TODO: Fix this authentication check
-    const { data: { user }, error } = await supabase.auth.getUser()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
     
-    // This line crashes when user is undefined
-    const userId = user.id
+    if (authError) {
+      console.error('Authentication error:', authError)
+      return NextResponse.json(
+        { success: false, error: 'Invalid token' },
+        { status: 401 }
+      )
+    }
     
-    // Rest of the protected logic
+    if (!user) {
+      console.warn('No user found in session')
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
     const { data, error: dbError } = await supabase
       .from('user_data')
       .select('*')
-      .eq('user_id', userId)
+      .eq('user_id', user.id)
     
-    if (dbError) throw dbError
+    if (dbError) {
+      console.error('Database error:', dbError)
+      return NextResponse.json(
+        { success: false, error: 'Failed to fetch user data' },
+        { status: 500 }
+      )
+    }
     
-    return NextResponse.json({ success: true, data })
+    return NextResponse.json({ 
+      success: true, 
+      data: data || [],
+      userId: user.id 
+    })
   } catch (error) {
-    console.error('Error in protected route:', error)
+    console.error('Unexpected error in protected route:', error)
     return NextResponse.json(
-      { error: error.message },
+      { success: false, error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function POST(request: NextRequest): Promise<NextResponse<ProtectedRouteResponse | ErrorResponse>> {
+  try {
+    const supabase = await createSupabaseServerClient()
+    
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
+    const body = await request.json()
+    
+    const { data, error: dbError } = await supabase
+      .from('user_data')
+      .insert({ ...body, user_id: user.id })
+      .select()
+    
+    if (dbError) {
+      console.error('Database error:', dbError)
+      return NextResponse.json(
+        { success: false, error: 'Failed to create user data' },
+        { status: 500 }
+      )
+    }
+    
+    return NextResponse.json({ 
+      success: true, 
+      data: data || [],
+      userId: user.id 
+    })
+  } catch (error) {
+    console.error('Unexpected error in protected route POST:', error)
+    return NextResponse.json(
+      { success: false, error: 'Internal server error' },
       { status: 500 }
     )
   }

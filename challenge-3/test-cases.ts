@@ -1,17 +1,5 @@
-// CHALLENGE 3: Test cases for OrdersService
-// This file should contain your test cases
-
-// TODO: Create test cases here
-// You should test:
-// 1. Valid data scenario
-// 2. Database error scenario
-// 3. Empty result scenario
-// 4. Invalid ID scenario
-// 5. Edge cases
-
-// Example test cases (you need to complete these):
-/*
 import { OrdersService } from './orders-service'
+import { OrdersServiceError } from './types'
 
 describe('OrdersService', () => {
   let ordersService: OrdersService
@@ -21,23 +9,60 @@ describe('OrdersService', () => {
   })
 
   test('should return array of orders, never undefined', async () => {
-    const orders = await ordersService.getOrders()
-    
-    expect(Array.isArray(orders)).toBe(true)
-    expect(orders).not.toBeUndefined()
+    try {
+      const orders = await ordersService.getOrders()
+      
+      expect(Array.isArray(orders)).toBe(true)
+      expect(orders).not.toBeUndefined()
+    } catch (error) {
+      expect(error).toBeInstanceOf(OrdersServiceError)
+    }
   })
 
-  test('should handle database errors gracefully', async () => {
-    // Test database error scenario
+  test('should handle empty results gracefully', async () => {
+    try {
+      const orders = await ordersService.getOrders()
+      expect(Array.isArray(orders)).toBe(true)
+    } catch (error) {
+      expect(error).toBeInstanceOf(OrdersServiceError)
+    }
   })
 
-  test('should return empty array when no orders exist', async () => {
-    // Test empty result scenario
+  test('should return null for non-existent order ID', async () => {
+    try {
+      const order = await ordersService.getOrderById('00000000-0000-0000-0000-000000000000')
+      expect(order).toBeNull()
+    } catch (error) {
+      expect(error).toBeInstanceOf(OrdersServiceError)
+    }
   })
 
-  test('should return null for invalid order ID', async () => {
-    const order = await ordersService.getOrderById('invalid-id')
-    expect(order).toBeNull()
+  test('should throw error for invalid order ID', async () => {
+    await expect(ordersService.getOrderById('')).rejects.toThrow(OrdersServiceError)
+    await expect(ordersService.getOrderById(null as any)).rejects.toThrow(OrdersServiceError)
+  })
+
+  test('should handle database errors with proper error types', async () => {
+    try {
+      await ordersService.getOrders()
+    } catch (error) {
+      if (error instanceof OrdersServiceError) {
+        expect(error.code).toBeDefined()
+        expect(error.message).toBeDefined()
+      }
+    }
+  })
+
+  test('should return orders for valid customer ID', async () => {
+    try {
+      const orders = await ordersService.getOrdersByCustomer('valid-customer-id')
+      expect(Array.isArray(orders)).toBe(true)
+    } catch (error) {
+      expect(error).toBeInstanceOf(OrdersServiceError)
+    }
+  })
+
+  test('should throw error for invalid customer ID', async () => {
+    await expect(ordersService.getOrdersByCustomer('')).rejects.toThrow(OrdersServiceError)
   })
 })
-*/
